@@ -21,11 +21,11 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class ControleEstado implements Serializable {
     
-    private EstadoDAO dao;
+    private EstadoDAO<Estado> dao;
     private Estado objeto;
 
     public ControleEstado() {
-        dao = new EstadoDAO();
+        dao = new EstadoDAO<>();
     }
     
     public String listar () {
@@ -38,7 +38,15 @@ public class ControleEstado implements Serializable {
     }
     
     public String salvar () {
-        if (dao.salvar(objeto)) {
+        boolean persistiu;
+        if (objeto.getId() == null) {
+            persistiu = dao.persist(objeto);
+        }
+        else {
+            persistiu = dao.merge(objeto);
+        }
+        
+        if (persistiu) {
             Util.mensagemInformacao(dao.getMensagem());
             return "listar";
         }

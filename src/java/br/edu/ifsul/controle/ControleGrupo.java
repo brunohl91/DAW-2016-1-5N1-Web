@@ -21,11 +21,11 @@ import javax.faces.bean.SessionScoped;
 @SessionScoped
 public class ControleGrupo implements Serializable {
     
-    private GrupoDAO dao;
+    private GrupoDAO<Grupo> dao;
     private Grupo objeto;
 
     public ControleGrupo() {
-        dao = new GrupoDAO();
+        dao = new GrupoDAO<>();
     }
     
     public String listar () {
@@ -38,7 +38,15 @@ public class ControleGrupo implements Serializable {
     }
     
     public String salvar () {
-        if (dao.salvar(objeto)) {
+        boolean persistiu;
+        if (objeto.getId() == null) {
+            persistiu = dao.persist(objeto);
+        }
+        else {
+            persistiu = dao.merge(objeto);
+        }
+        
+        if (persistiu) {
             Util.mensagemInformacao(dao.getMensagem());
             return "listar";
         }

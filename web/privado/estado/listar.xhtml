@@ -2,47 +2,64 @@
 <!DOCTYPE html PUBLIC "-//W3C//DTD XHTML 1.0 Transitional//EN" "http://www.w3.org/TR/xhtml1/DTD/xhtml1-transitional.dtd">
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
-      xmlns:f="http://xmlns.jcp.org/jsf/core">
-    <h:head>
-        <title>Listagem de Estados</title>
-    </h:head>
-    <h:body>
-        <h:form>
-            <h:messages/>
-            <h:commandButton value="Novo" action="#{controleEstado.novo()}"/>
-            <h:dataTable value="#{controleEstado.dao.lista}" var="obj">
-                <h:column>
-                    <f:facet name="header">
-                        <h:outputText value="ID"/>
+      xmlns:f="http://xmlns.jcp.org/jsf/core"
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
+    
+    <ui:composition template="/templates/template.xhtml">
+        <ui:define name="titulo">Controle de Estados</ui:define>
+        <ui:define name="conteudo">
+            <h:form>
+                <p:messages/>
+                <p:growl id="growl"/>
+                <p:commandButton value="Novo" action="#{controleEstado.novo()}" ajax="false"/>
+                <div align="center">
+                    <p:panelGrid columns="11">
+                        <p:outputLabel value="Ordem:"/>
+                        <p:selectOneMenu value="#{controleEstado.dao.ordem}">
+                            <f:selectItem itemLabel="ID" itemValue="id"/>
+                            <f:selectItem itemLabel="Nome" itemValue="nome"/>
+                            <f:selectItem itemLabel="UF" itemValue="uf"/>
+                            <p:ajax update="listagem growl"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Filtro"/>
+                        <p:inputText value="#{controleEstado.dao.filter}">
+                            <p:ajax event="keyup" update="listagem growl"/>
+                        </p:inputText>
+                        <p:commandButton value="Filtrar" update="listagem growl"/>
+                        <p:outputLabel value="Máximo de Objetos:"/>
+                        <p:inputText value="#{controleEstado.dao.maximoObjetos}">
+                            <p:ajax event="keyup" update="listagem"/>
+                        </p:inputText>
+                        <p:commandButton value="Primeiro" actionListener="#{controleEstado.dao.primeiro()}" update="listagem" />
+                        <p:commandButton value="Anterior" actionListener="#{controleEstado.dao.anterior()}" update="listagem" />
+                        <p:commandButton value="Proximo" actionListener="#{controleEstado.dao.proximo()}" update="listagem" />
+                        <p:commandButton value="Último" actionListener="#{controleEstado.dao.ultimo()}" update="listagem" />
+                    </p:panelGrid>
+                </div>
+                <p:dataTable value="#{controleEstado.dao.listaObjetos}" var="obj" id="listagem">
+                    <f:facet name="footer">
+                        <p:outputLabel value="#{controleEstado.dao.mensagemNavegacao}"/>
                     </f:facet>
-                    <h:outputText value="#{obj.id}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">
-                        <h:outputText value="Nome"/>
-                    </f:facet>
-                    <h:outputText value="#{obj.nome}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">
-                        <h:outputText value="UF"/>
-                    </f:facet>
-                    <h:outputText value="#{obj.uf}"/>
-                </h:column>
-                <h:column>
-                    <f:facet name="header">
-                        <h:outputText value="Alterar"/>
-                    </f:facet>
-                    <h:commandLink value="Alterar" action="#{controleEstado.editar(obj.id)}" />
-                </h:column>
-                <h:column>
-                    <f:facet name="header">
-                        <h:outputText value="Remover"/>
-                    </f:facet>
-                    <h:commandLink value="Remover" action="#{controleEstado.remover(obj.id)}" onclick="if(!confirm('Confirma a exclusão')) return false" />
-                </h:column>
-            </h:dataTable>
-        </h:form>
-    </h:body>
+                    <p:column headerText="ID">
+                        <h:outputText value="#{obj.id}"/>
+                    </p:column>
+                    <p:column headerText="Nome">
+                        <h:outputText value="#{obj.nome}"/>
+                    </p:column>
+                    <p:column headerText="UF">
+                        <h:outputText value="#{obj.uf}"/>
+                    </p:column>
+                    <p:column headerText="Alterar">
+                        <p:commandLink value="Alterar" action="#{controleEstado.editar(obj.id)}" ajax="false"/>
+                    </p:column>
+                    <p:column headerText="Remover">
+                        <p:commandLink value="Remover" action="#{controleEstado.remover(obj.id)}" onclick="if(!confirm('Confirma a exclusão')) return false" ajax="false" />
+                    </p:column>
+                </p:dataTable>
+            </h:form>
+        </ui:define>
+    </ui:composition>
+    
 </html>
 
