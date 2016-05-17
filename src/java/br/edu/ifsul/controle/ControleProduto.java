@@ -5,39 +5,46 @@
  */
 package br.edu.ifsul.controle;
 
+import br.edu.ifsul.dao.ProdutoDAO;
+import br.edu.ifsul.dao.GrupoDAO;
 import br.edu.ifsul.dao.MarcaDAO;
+import br.edu.ifsul.modelo.Grupo;
+import br.edu.ifsul.modelo.Produto;
 import br.edu.ifsul.modelo.Marca;
 import br.edu.ifsul.util.Util;
 import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
 
 /**
  *
  * @author Bruno
  */
-@ManagedBean(name = "controleMarca")
-@SessionScoped
-public class ControleMarca implements Serializable {
+@ManagedBean(name = "controleProduto")
+@ViewScoped
+public class ControleProduto implements Serializable {
     
-    private MarcaDAO<Marca> dao;
-    private Marca objeto;
+    private ProdutoDAO<Produto> dao;
+    private Produto objeto;
+    private GrupoDAO<Grupo> daoGrupo;
+    private MarcaDAO<Marca> daoMarca;
 
-    public ControleMarca() {
-        dao = new MarcaDAO<Marca>();
+    public ControleProduto() {
+        dao = new ProdutoDAO<>();
+        daoGrupo = new GrupoDAO<>();
+        daoMarca = new MarcaDAO<>();
     }
     
     public String listar () {
-        return "/privado/marca/listar?faces-redirect=true";
+        return "/privado/produto/listar?faces-redirect=true";
     }
     
-    public String novo () {
-        objeto = new Marca();
-        return "formulario";
+    public void novo () {
+        objeto = new Produto();
     }
     
-    public String salvar () {
+    public void salvar () {
         boolean persistiu;
         if (objeto.getId() == null) {
             persistiu = dao.persist(objeto);
@@ -48,25 +55,17 @@ public class ControleMarca implements Serializable {
         
         if (persistiu) {
             Util.mensagemInformacao(dao.getMensagem());
-            return "listar";
         }
         else {
             Util.mensagemErro(dao.getMensagem());
-            return "formulario";
         }
     }
     
-    public String cancelar () {
-        return "listar";
-    }
-    
-    public String editar (Integer id) {
+    public void editar (Integer id) {
         try {
             objeto = dao.localizar(id);
-            return "formulario";
         } catch (Exception e) {
             Util.mensagemErro("Erro ao recuperar objeto: " + Util.getMensagemErro(e));
-            return "listar";
         }
     }
     
@@ -84,20 +83,36 @@ public class ControleMarca implements Serializable {
         }
     }
     
-    public MarcaDAO getDao() {
+    public ProdutoDAO getDao() {
         return dao;
     }
 
-    public void setDao(MarcaDAO dao) {
+    public void setDao(ProdutoDAO dao) {
         this.dao = dao;
     }
 
-    public Marca getObjeto() {
+    public Produto getObjeto() {
         return objeto;
     }
 
-    public void setObjeto(Marca objeto) {
+    public void setObjeto(Produto objeto) {
         this.objeto = objeto;
+    }
+
+    public GrupoDAO<Grupo> getDaoGrupo() {
+        return daoGrupo;
+    }
+
+    public void setDaoGrupo(GrupoDAO<Grupo> daoGrupo) {
+        this.daoGrupo = daoGrupo;
+    }
+
+    public MarcaDAO<Marca> getDaoMarca() {
+        return daoMarca;
+    }
+
+    public void setDaoMarca(MarcaDAO<Marca> daoMarca) {
+        this.daoMarca = daoMarca;
     }
     
     

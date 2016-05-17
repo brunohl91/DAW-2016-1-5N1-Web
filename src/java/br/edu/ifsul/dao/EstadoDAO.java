@@ -13,6 +13,7 @@ public class EstadoDAO<T> extends DAOGenerico<Estado> implements Serializable {
     public EstadoDAO () {
         super();
         super.setClassePersistente(Estado.class);
+        super.setOrdem("nome");
     }
     
 }

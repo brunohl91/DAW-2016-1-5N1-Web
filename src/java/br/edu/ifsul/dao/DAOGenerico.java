@@ -18,6 +18,7 @@ import javax.persistence.EntityManager;
 public class DAOGenerico<T> implements Serializable {
     
     private List<T> listaObjetos;
+    private List<T> listaTodos;
     private EntityManager em;
     private Class classePersistente;
     private String mensagem = "";
@@ -89,8 +90,8 @@ public class DAOGenerico<T> implements Serializable {
     public List<T> getListaObjetos() {
         String jpql = "from " + classePersistente.getSimpleName();
         String where = "";
-        filter = filter.replace("'", "");
-        ordem = ordem.replace("'", "");
+        filter = filter.replaceAll("[';-]", "");
+        ordem = ordem.replaceAll("[';-]", "");
         if (filter.length() > 0) {
             if (ordem.equals("id")) {
                 try {
@@ -106,6 +107,11 @@ public class DAOGenerico<T> implements Serializable {
         jpql += " order by " + ordem;
         totalObjetos = em.createQuery("select id from " + classePersistente.getSimpleName() + where + " order by " + ordem).getResultList().size();
         return em.createQuery(jpql).setFirstResult(posicaoAtual).setMaxResults(maximoObjetos).getResultList();
+    }
+    
+    public List<T> getListaTodos() {
+        String jpql = "from " + classePersistente.getSimpleName() + " order by " + ordem;
+        return em.createQuery(jpql).getResultList();
     }
     
     public void primeiro () {
@@ -209,6 +215,10 @@ public class DAOGenerico<T> implements Serializable {
 
     public void setTotalObjetos(Integer totalObjetos) {
         this.totalObjetos = totalObjetos;
+    }
+
+    public void setListaTodos(List<T> listaTodos) {
+        this.listaTodos = listaTodos;
     }
     
 }

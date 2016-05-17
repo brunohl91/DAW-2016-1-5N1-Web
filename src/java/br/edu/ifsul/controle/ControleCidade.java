@@ -5,39 +5,44 @@
  */
 package br.edu.ifsul.controle;
 
+import br.edu.ifsul.dao.CidadeDAO;
+import br.edu.ifsul.dao.EstadoDAO;
 import br.edu.ifsul.dao.MarcaDAO;
+import br.edu.ifsul.modelo.Cidade;
+import br.edu.ifsul.modelo.Estado;
 import br.edu.ifsul.modelo.Marca;
 import br.edu.ifsul.util.Util;
 import java.io.Serializable;
 import javax.faces.bean.ManagedBean;
-import javax.faces.bean.SessionScoped;
+import javax.faces.bean.ViewScoped;
 
 
 /**
  *
  * @author Bruno
  */
-@ManagedBean(name = "controleMarca")
-@SessionScoped
-public class ControleMarca implements Serializable {
+@ManagedBean(name = "controleCidade")
+@ViewScoped
+public class ControleCidade implements Serializable {
     
-    private MarcaDAO<Marca> dao;
-    private Marca objeto;
+    private CidadeDAO<Cidade> dao;
+    private Cidade objeto;
+    private EstadoDAO<Estado> daoEstado;
 
-    public ControleMarca() {
-        dao = new MarcaDAO<Marca>();
+    public ControleCidade() {
+        dao = new CidadeDAO<>();
+        daoEstado = new EstadoDAO<>();
     }
     
     public String listar () {
-        return "/privado/marca/listar?faces-redirect=true";
+        return "/privado/cidade/listar?faces-redirect=true";
     }
     
-    public String novo () {
-        objeto = new Marca();
-        return "formulario";
+    public void novo () {
+        objeto = new Cidade();
     }
     
-    public String salvar () {
+    public void salvar () {
         boolean persistiu;
         if (objeto.getId() == null) {
             persistiu = dao.persist(objeto);
@@ -48,25 +53,17 @@ public class ControleMarca implements Serializable {
         
         if (persistiu) {
             Util.mensagemInformacao(dao.getMensagem());
-            return "listar";
         }
         else {
             Util.mensagemErro(dao.getMensagem());
-            return "formulario";
         }
     }
     
-    public String cancelar () {
-        return "listar";
-    }
-    
-    public String editar (Integer id) {
+    public void editar (Integer id) {
         try {
             objeto = dao.localizar(id);
-            return "formulario";
         } catch (Exception e) {
             Util.mensagemErro("Erro ao recuperar objeto: " + Util.getMensagemErro(e));
-            return "listar";
         }
     }
     
@@ -84,22 +81,28 @@ public class ControleMarca implements Serializable {
         }
     }
     
-    public MarcaDAO getDao() {
+    public CidadeDAO getDao() {
         return dao;
     }
 
-    public void setDao(MarcaDAO dao) {
+    public void setDao(CidadeDAO dao) {
         this.dao = dao;
     }
 
-    public Marca getObjeto() {
+    public Cidade getObjeto() {
         return objeto;
     }
 
-    public void setObjeto(Marca objeto) {
+    public void setObjeto(Cidade objeto) {
         this.objeto = objeto;
     }
-    
-    
+
+    public EstadoDAO<Estado> getDaoEstado() {
+        return daoEstado;
+    }
+
+    public void setDaoEstado(EstadoDAO<Estado> daoEstado) {
+        this.daoEstado = daoEstado;
+    }
     
 }

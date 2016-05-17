@@ -3,40 +3,56 @@
 <html xmlns="http://www.w3.org/1999/xhtml"
       xmlns:h="http://xmlns.jcp.org/jsf/html"
       xmlns:f="http://xmlns.jcp.org/jsf/core"
-      xmlns:ui="http://xmlns.jcp.org/jsf/facelets">
+      xmlns:ui="http://xmlns.jcp.org/jsf/facelets"
+      xmlns:p="http://primefaces.org/ui">
     
     <ui:composition template="/templates/template.xhtml">
         <ui:define name="titulo">Controle de Marcas</ui:define>
         <ui:define name="conteudo">
             <h:form>
-                <h:messages/>
-                <h:commandButton value="Novo" action="#{controleMarca.novo()}"/>
-                <h:dataTable value="#{controleMarca.dao.lista}" var="obj">
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="ID"/>
-                        </f:facet>
+                <p:messages/>
+                <p:growl id="growl"/>         
+                <p:commandButton value="Novo" action="#{controleMarca.novo()}" ajax="false"/>
+                <div align="center">
+                    <p:panelGrid columns="11">
+                        <p:outputLabel value="Ordem:"/>
+                        <p:selectOneMenu value="#{controleMarca.dao.ordem}">
+                            <f:selectItem itemLabel="ID" itemValue="id"/>
+                            <f:selectItem itemLabel="Nome" itemValue="nome"/>
+                            <p:ajax update="listagem growl"/>
+                        </p:selectOneMenu>
+                        <p:outputLabel value="Filtro"/>
+                        <p:inputText value="#{controleMarca.dao.filter}">
+                            <p:ajax event="keyup" update="listagem growl"/>
+                        </p:inputText>
+                        <p:commandButton value="Filtrar" update="listagem growl"/>
+                        <p:outputLabel value="Máximo de Objetos:"/>
+                        <p:inputText value="#{controleMarca.dao.maximoObjetos}">
+                            <p:ajax event="keyup" update="listagem"/>
+                        </p:inputText>
+                        <p:commandButton value="Primeiro" actionListener="#{controleMarca.dao.primeiro()}" update="listagem" />
+                        <p:commandButton value="Anterior" actionListener="#{controleMarca.dao.anterior()}" update="listagem" />
+                        <p:commandButton value="Proximo" actionListener="#{controleMarca.dao.proximo()}" update="listagem" />
+                        <p:commandButton value="Último" actionListener="#{controleMarca.dao.ultimo()}" update="listagem" />
+                    </p:panelGrid>
+                </div>
+                <p:dataTable value="#{controleMarca.dao.listaObjetos}" var="obj" id="listagem">
+                    <f:facet name="footer">
+                        <p:outputLabel value="#{controleMarca.dao.mensagemNavegacao}"/>
+                    </f:facet>
+                    <p:column headerText="ID">
                         <h:outputText value="#{obj.id}"/>
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="Nome"/>
-                        </f:facet>
+                    </p:column>
+                    <p:column headerText="Nome">
                         <h:outputText value="#{obj.nome}"/>
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="Alterar"/>
-                        </f:facet>
-                        <h:commandLink value="Alterar" action="#{controleMarca.editar(obj.id)}" />
-                    </h:column>
-                    <h:column>
-                        <f:facet name="header">
-                            <h:outputText value="Remover"/>
-                        </f:facet>
-                        <h:commandLink value="Remover" action="#{controleMarca.remover(obj.id)}" onclick="if(!confirm('Confirma a exclusão')) return false" />
-                    </h:column>
-                </h:dataTable>
+                    </p:column>
+                    <p:column headerText="Alterar">
+                        <p:commandLink value="Alterar" action="#{controleMarca.editar(obj.id)}" ajax="false" />
+                    </p:column>
+                    <p:column headerText="Remover">
+                        <p:commandLink value="Remover" action="#{controleMarca.remover(obj.id)}" ajax="false" onclick="if(!confirm('Confirma a exclusão')) return false" />
+                    </p:column>
+                </p:dataTable>
             </h:form>
         </ui:define>
     </ui:composition>
